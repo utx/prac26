@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 26</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .hrow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 22px; margin: 14px 0 16px; }
+  .hnum { display: inline-flex; gap: 3px; }
+  .hnum .dig, .hnum .hid { width: 30px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink); border-radius: 5px; font-size: 22px; font-weight: 700; background: #fff; }
+  .hnum .hid { background: var(--ink); color: #fff; font-size: 18px; }
+  .hnum .hid.sq { color: #f2c14e; }
+  .hnum .hid.tri { color: #8fd3c7; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 26</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 26
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: cloze passage ---- */
+const CLOZE_TEXT = `
+<p>In 1922, a Melbourne food company asked a young chemist named Cyril Callister to solve an unusual problem. After the First World War, supplies of the popular British spread Marmite had been {1}, and the company wanted to make an Australian version.</p>
+<p>Callister experimented with yeast left over from breweries, which would otherwise have been thrown away. After months of work he produced a dark, salty paste. The company held a competition to name it, and the winning name was “Vegemite”.</p>
+<p>At first, Australians were not {2}. Sales were so slow that the company tried a new name, “Parwill”, as a joke: if “Marmite” sounds like “Ma might”, then “Parwill” sounds like “Pa will”. The new name did not help either. {3}, clever advertising that gave away free jars with other products won people over, and Vegemite became a breakfast favourite.</p>`;
+
+function clozeHtml() {
+  const si = SECTIONS.findIndex(s => s.id === "reading");
+  let t = CLOZE_TEXT;
+  SECTIONS[si].questions.forEach((q, i) => {
+    const chosen = responses[si][i];
+    let fill;
+    if (passMode === "review") fill = `<span class="gap filled correct">(${i + 1}) ${q.options[q.answer]}</span>`;
+    else if (chosen !== null) fill = `<span class="gap filled">(${i + 1}) ${q.options[chosen]}</span>`;
+    else fill = `<span class="gap">(${i + 1}) ……</span>`;
+    t = t.replace(`{${i + 1}}`, fill);
+  });
+  return t;
+}
+const PASSAGE = {
+  title: "A Very Australian Spread",
+  note: "Read the text below and decide which answer best fits each gap.",
+  html: clozeHtml
+};
+
+/* ---- symbols drawn in a 100 x 100 box (all symmetric) ---- */
+const SYM = {
+  "●": `<circle cx="50" cy="50" r="22" fill="${INK}"/>`,
+  "■": `<rect x="29" y="29" width="42" height="42" fill="${INK}"/>`,
+  "✚": `<path d="M42 22 H58 V42 H78 V58 H58 V78 H42 V58 H22 V42 H42 Z" fill="${INK}"/>`,
+  "◎": `<circle cx="50" cy="50" r="27" fill="none" stroke="${INK}" stroke-width="8"/><circle cx="50" cy="50" r="10" fill="${INK}"/>`,
+  "○": `<circle cx="50" cy="50" r="22" fill="none" stroke="${INK}" stroke-width="9"/>`,
+  "✖": `<path d="M28 28 L72 72 M72 28 L28 72" stroke="${INK}" stroke-width="13" stroke-linecap="round"/>`
+};
+
+/* ---- Thinking Skills Q3: net and cube views ---- */
+const NET = [[0, 1, "●"], [1, 0, "■"], [1, 1, "✚"], [1, 2, "◎"], [1, 3, "○"], [2, 1, "✖"]];
+const NET_SVG = (() => {
+  const u = 46; let g = "";
+  NET.forEach(([r, c, s]) => g += `<rect x="${c * u}" y="${r * u}" width="${u}" height="${u}" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <g transform="translate(${c * u} ${r * u}) scale(${u / 100})">${SYM[s]}</g>`);
+  return `<svg viewBox="-3 -3 ${4 * u + 6} ${3 * u + 6}" width="${4 * u + 6}" height="${3 * u + 6}" role="img" aria-label="A cube net shaped like a cross. The middle row has four squares: filled square, plus sign, target (ring with a dot), ring. Above the plus sign is a filled circle. Below the plus sign is a cross (X).">${g}</svg>`;
+})();
+function cubeView(top, left, right, label) {
+  const s = 52, c = 0.866 * s, ox = 60, oy = 18;
+  const P = (x, y, z) => [ox + (x - y) * c, oy + (x + y) * s / 2 - z * s + s];
+  const face = (o, u, v, sym, fill) => {
+    const [ax, ay] = o, [ux, uy] = u, [vx, vy] = v;
+    const pts = [o, [ax + ux, ay + uy], [ax + ux + vx, ay + uy + vy], [ax + vx, ay + vy]];
+    return `<polygon points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="${fill}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>
+      <g transform="matrix(${(ux / 100).toFixed(4)} ${(uy / 100).toFixed(4)} ${(vx / 100).toFixed(4)} ${(vy / 100).toFixed(4)} ${ax.toFixed(1)} ${ay.toFixed(1)})">${SYM[sym]}</g>`;
+  };
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+  const T0 = P(0, 0, 1), L0 = P(0, 1, 1), R0 = P(1, 0, 1);
+  return `<svg viewBox="10 14 100 112" width="100" height="112" role="img" aria-label="${label}">
+    ${face(T0, sub(P(1, 0, 1), T0), sub(P(0, 1, 1), T0), top, "#f4f6fa")}
+    ${face(L0, sub(P(1, 1, 1), L0), sub(P(0, 1, 0), L0), left, "#e2e8f2")}
+    ${face(R0, sub(P(1, 1, 1), R0), sub(P(1, 0, 0), R0), right, "#cdd7e6")}</svg>`;
+}
+const CUBE_OPTS = [
+  cubeView("●", "○", "■", "Option A: circle on top, ring on the left face, square on the right face"),
+  cubeView("●", "✖", "■", "Option B: circle on top, X on the left face, square on the right face"),
+  cubeView("◎", "■", "●", "Option C: target on top, square on the left face, circle on the right face"),
+  cubeView("●", "✚", "○", "Option D: circle on top, plus on the left face, ring on the right face")
+];
+
+/* ---- Maths Q3: spinner ---- */
+const SPIN = ["R", "B", "G", "R", "Y", "B", "G", "R"];
+const SPIN_COL = { R: "#d9534f", B: "#4a7fc1", G: "#5aa469", Y: "#f2c14e" };
+const SPINNER_SVG = (() => {
+  const cx = 90, cy = 90, r = 80; let g = "";
+  SPIN.forEach((k, i) => {
+    const a0 = (-90 + i * 45) * Math.PI / 180, a1 = (-90 + (i + 1) * 45) * Math.PI / 180, am = (a0 + a1) / 2;
+    g += `<path d="M${cx} ${cy} L${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)} A${r} ${r} 0 0 1 ${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)} Z" fill="${SPIN_COL[k]}" stroke="#fff" stroke-width="2"/>
+          <text x="${(cx + r * 0.66 * Math.cos(am)).toFixed(1)}" y="${(cy + r * 0.66 * Math.sin(am) + 6).toFixed(1)}" font-size="17" font-weight="700" text-anchor="middle" fill="#fff">${k}</text>`;
+  });
+  g += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${INK}" stroke-width="2"/>
+        <circle cx="${cx}" cy="${cy}" r="5" fill="${INK}"/>`;
+  return `<svg viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="A spinner with 8 equal parts: 3 red, 2 blue, 2 green and 1 yellow.">${g}</svg>`;
+})();
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    passage: PASSAGE,
+    intro: "Read the text, then decide which answer (A, B, C or D) best fits each gap.",
+    questions: [
+      {
+        stem: "Which word best fits <b>gap 1</b>?",
+        options: ["invented", "cut off", "increased", "inspected"],
+        answer: 1,
+        skill: "choosing a word that fits the meaning",
+        explain: `<p>The company wanted to make its own version, so something must have gone wrong with the supply of Marmite from Britain. “<b>Cut off</b>” means stopped, which explains why Australia needed its own spread.</p>
+                  <p class="why-not">“Increased” is the opposite: if there were more supplies, nobody would need a new spread. Marmite was British, so its supplies weren’t “invented” here. “Inspected” doesn’t explain why a new spread was needed.</p>`
+      },
+      {
+        stem: "Which word best fits <b>gap 2</b>?",
+        options: ["allowed", "invited", "convinced", "hungry"],
+        answer: 2,
+        skill: "using the next sentence to choose a word",
+        explain: `<p>The next sentence says “Sales were so slow…”. People weren’t buying it, because they weren’t sure they liked it. They were not <b>convinced</b>.</p>
+                  <p class="why-not">“Allowed” and “invited” don’t make sense: nobody needs permission or an invitation to buy a spread. “Hungry” misses the point: the problem was this product, not whether people wanted food.</p>`
+      },
+      {
+        stem: "Which word or phrase best fits <b>gap 3</b>?",
+        options: ["For example", "In the end", "Before that", "Similarly"],
+        answer: 1,
+        skill: "choosing a connective",
+        explain: `<p>The story so far is one failure after another: slow sales, then a new name that didn’t help. The last sentence tells how things <em>finally</em> turned around. “<b>In the end</b>” signals that conclusion.</p>
+                  <p class="why-not">“Before that” puts the success in the wrong order. “For example” would need an example of the failures, not a success. “Similarly” would mean the advertising also failed, but it worked.</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `<div style="border:2px solid #1b2a41;border-radius:6px;padding:10px 14px;margin:0 0 12px">Every dog that won a ribbon at the dog show had been brushed that morning.</div>
+               <ul class="facts">
+                 <li><b>Ana:</b> “Rex won a ribbon, so he must have been brushed that morning.”</li>
+                 <li><b>Ben:</b> “Max wasn’t brushed that morning, so he can’t have won a ribbon.”</li>
+                 <li><b>Cal:</b> “Bella was brushed that morning, so she must have won a ribbon.”</li>
+                 <li><b>Dee:</b> “Some dogs that were brushed that morning might not have won a ribbon.”</li>
+               </ul>
+               <p style="margin:10px 0 0">If the information in the box is true, who has made a mistake?</p>`,
+        options: ["Ana", "Ben", "Cal", "Dee"],
+        answer: 2,
+        skill: "spotting a reversed (back-to-front) argument",
+        explain: `<p>The box tells us: won a ribbon → was brushed. It does <em>not</em> tell us: was brushed → won a ribbon. Lots of dogs might have been brushed and still not won. Cal has turned the rule back to front.</p>
+                  <p class="why-not">Ben (B) is the trap. His reasoning sounds backwards, but it is correct: if every winner was brushed, then a dog that <em>wasn’t</em> brushed can’t be a winner. Ana uses the rule the right way round. Dee is right too: brushed dogs don’t all have to be winners.</p>`
+      },
+      {
+        stem: `Four friends arrived at a party one at a time.
+               <ul class="facts">
+                 <li>Mia arrived before Jack.</li>
+                 <li>Kai arrived after Jack.</li>
+                 <li>Lou arrived before Kai.</li>
+               </ul>
+               <p style="margin:10px 0 0">Which one of these extra facts would tell you the <b>exact</b> order they arrived in?</p>`,
+        options: ["Mia arrived first.", "Lou arrived second.", "Kai arrived last.", "Jack arrived before Kai."],
+        answer: 1,
+        skill: "working out what information is still needed",
+        explain: `<p>From the clues, Mia is before Jack, Jack is before Kai, and Lou is before Kai, so Kai must be last. But Lou could fit in anywhere before Kai, which gives three possible orders:</p>
+                  <p style="font-family:monospace">Lou, Mia, Jack, Kai<br>Mia, Lou, Jack, Kai<br>Mia, Jack, Lou, Kai</p>
+                  <p>Only “Lou arrived second” picks out exactly one of these: Mia, Lou, Jack, Kai.</p>
+                  <p class="why-not">“Mia arrived first” (A) is the trap: it rules out one order but still leaves two. “Kai arrived last” (C) and “Jack arrived before Kai” (D) are already known from the clues, so they add nothing new.</p>`
+      },
+      {
+        stem: `This net is folded to make a cube.
+               <div class="figure">${NET_SVG}</div>
+               <p style="margin:0">Which of these could be a picture of the cube?</p>`,
+        visualOptions: true,
+        options: CUBE_OPTS,
+        answer: 0,
+        skill: "visualising a cube from its net",
+        explain: `<p>First work out which faces are <b>opposite</b>, because opposite faces can never be seen together. In the row of four (■ ✚ ◎ ○), squares that are one apart are opposite: ■ and ◎, and ✚ and ○. The two squares sticking out above and below (● and ✖) are opposite each other.</p>
+                  <p>B shows ● and ✖ together, C shows ◎ and ■ together, and D shows ✚ and ○ together. All are impossible. Only <b>A</b> shows three faces that can meet at one corner. (When the net is folded with ● on top and ■ on the right, ○ really does land on the left.)</p>
+                  <p class="why-not">Each wrong answer looks fine at a glance. The trick is to find the opposite pairs first, then check each picture for a pair that can’t be seen together.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `A shop sells pencils in three ways:
+               <table style="border-collapse:collapse;margin:10px 0;font-size:15px">
+                 <tr><td style="border:1px solid #c9d1dc;padding:5px 12px">1 pencil</td><td style="border:1px solid #c9d1dc;padding:5px 12px">$1.20</td></tr>
+                 <tr><td style="border:1px solid #c9d1dc;padding:5px 12px">pack of 5</td><td style="border:1px solid #c9d1dc;padding:5px 12px">$5.00</td></tr>
+                 <tr><td style="border:1px solid #c9d1dc;padding:5px 12px">pack of 12</td><td style="border:1px solid #c9d1dc;padding:5px 12px">$10.00</td></tr>
+               </table>
+               <p style="margin:0">Jess has $23 to spend. What is the greatest number of pencils she can buy?</p>`,
+        options: ["19", "24", "25", "26", "27"],
+        answer: 3,
+        skill: "finding the best value",
+        explain: `<p>The pack of 12 is the best deal (less than $1 a pencil), so buy as many as possible. Two packs give 24 pencils for $20, which leaves $3. A pack of 5 costs $5, which is too much, but $3 buys 2 single pencils ($2.40). Total: 24 + 2 = <b>26</b>.</p>
+                  <p>Check another way: 1 pack of 12 + 2 packs of 5 + 2 singles = $22.40 for only 24 pencils. Fewer.</p>
+                  <p class="why-not">27 (E) is the trap: it works out $10 for 12 pencils as a price per pencil and divides $23 by it, but you can’t buy part of a pack. 24 (B) stops after the two big packs and wastes the $3. 25 (C) buys only one extra pencil. 19 (A) buys only single pencils.</p>`
+      },
+      {
+        stem: `Three boxes are stacked on top of each other. Each box can be stood on any of its faces.
+               <ul class="facts">
+                 <li>Box 1: 10 cm × 25 cm × 30 cm</li>
+                 <li>Box 2: 12 cm × 15 cm × 20 cm</li>
+                 <li>Box 3: 8 cm × 18 cm × 22 cm</li>
+               </ul>
+               <p style="margin:10px 0 0">The stack must fit under a shelf, so it can be no more than <b>60 cm</b> tall. What is the tallest the stack can be?</p>`,
+        options: ["30 cm", "58 cm", "59 cm", "60 cm", "72 cm"],
+        answer: 3,
+        skill: "choosing measurements to meet a limit",
+        explain: `<p>Each box adds one of its three measurements to the height. Can we make exactly 60? Try the tallest way for Box 1 (30 cm). That leaves 30 cm for the other two boxes, and 12 (Box 2) + 18 (Box 3) = 30. So 30 + 12 + 18 = <b>60 cm</b> exactly, which is the most allowed.</p>
+                  <p class="why-not">58 cm (B) is the trap: it picks the tallest way for Boxes 1 and 2 (30 + 20 = 50), then only 8 cm fits for Box 3. Being greedy early doesn’t give the best total. 59 cm (C) is close but not the best. 72 cm (E) is the tallest possible stack, but it doesn’t fit under the shelf. 30 cm (A) is the shortest possible stack.</p>`
+      },
+      {
+        stem: `Here is a spinner with 8 equal parts.
+               <div class="figure">${SPINNER_SVG}</div>
+               <p style="margin:10px 0 0">Which statement about one spin is correct?</p>`,
+        options: ["Red will come up more than half the time, because it has the most parts.",
+                  "Blue and green together are more likely than red.",
+                  "Yellow can never come up, because it has only one part.",
+                  "Red and yellow together are more likely than blue and green together.",
+                  "Every colour is equally likely, because the spinner is fair."],
+        answer: 1,
+        skill: "comparing chances",
+        explain: `<p>Count the parts: red 3, blue 2, green 2, yellow 1. Blue and green together cover 2 + 2 = 4 parts, and red covers 3 parts. 4 out of 8 is more likely than 3 out of 8, so <b>B</b> is correct.</p>
+                  <p class="why-not">D is the trap: red and yellow together cover 3 + 1 = 4 parts, which is the same as blue and green, so they are <em>equally</em> likely, not more likely. A is wrong because 3 out of 8 is less than half. C is wrong because 1 out of 8 is unlikely, not impossible. E is wrong because the colours cover different numbers of parts.</p>`
+      }
+    ]
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+function showStart() {
+  hdrSection.textContent = "";
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 26</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Take as long as you need — there is no time limit.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <button class="primary" id="start">Start the reading section</button>
+    </div>`;
+  document.getElementById("start").onclick = () => { current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
